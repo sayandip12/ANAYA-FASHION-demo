@@ -48,6 +48,11 @@
   will-change: transform, opacity;
   user-select: none;
   -webkit-user-drag: none;
+  cursor: pointer;
+}
+
+.collection-card > * {
+  pointer-events: none;
 }
 
 .collection-image-wrapper {
