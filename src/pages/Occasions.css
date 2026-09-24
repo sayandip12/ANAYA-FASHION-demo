@@ -141,6 +141,13 @@
   text-transform: uppercase;
 }
 
+.occasion-product-price {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
 .occasions-loading,
 .no-products-message {
   text-align: center;

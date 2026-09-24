@@ -20,6 +20,7 @@ const Occasions = () => {
   const [products, setProducts] = useState([]);
   const [activeOccasion, setActiveOccasion] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     loadProducts();
@@ -30,8 +31,9 @@ const Occasions = () => {
     try {
       const allProducts = await productService.getProducts();
       setProducts(allProducts);
-    } catch (error) {
-      console.error("Failed to load products", error);
+    } catch (err) {
+      console.error("Failed to load products", err);
+      setError("Unable to load the collection. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +50,7 @@ const Occasions = () => {
   }, [availableOccasions, activeOccasion]);
 
   const filteredProducts = products.filter(product => {
-    if (!product.occasions || !Array.isArray(product.occasions)) return false;
+    if (!activeOccasion || !product.occasions || !Array.isArray(product.occasions)) return false;
     return product.occasions.some(occ => occ.toLowerCase() === activeOccasion.toLowerCase());
   });
 
@@ -82,26 +84,50 @@ const Occasions = () => {
           </div>
           
           {isLoading ? (
-            <div className="occasions-loading">Loading curations...</div>
+            <div className="occasions-loading">Loading the collection...</div>
+          ) : error ? (
+            <div className="occasions-error" style={{ textAlign: 'center', padding: '100px 20px' }}>
+              <h2>{error}</h2>
+              <button className="btn-primary" onClick={loadProducts} style={{ marginTop: '20px' }}>Retry</button>
+            </div>
+          ) : products.length === 0 ? (
+            <div className="occasions-empty" style={{ textAlign: 'center', padding: '100px 20px' }}>
+              <h2>NO PIECES AVAILABLE</h2>
+              <p>No products are currently available.</p>
+              <div style={{ marginTop: '20px', display: 'flex', gap: '15px', justifyContent: 'center' }}>
+                <Link to="/women" className="btn-primary">Women</Link>
+                <Link to="/men" className="btn-secondary">Men</Link>
+                <Link to="/" className="btn-secondary">Home</Link>
+              </div>
+            </div>
           ) : (
             <div className="occasions-grid">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map(product => (
                   <Link to={`/product/${product.id}`} key={product.id} className="occasion-product-card">
                     <div className="occasion-product-image-container">
-                      <img src={product.image} alt={product.name} className="occasion-product-image" />
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="occasion-product-image" 
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
                     </div>
                     <div className="occasion-product-info">
                       <h3 className="occasion-product-name">{product.name}</h3>
                       <p className="occasion-product-details">
                         {product.category} • {product.gender}
                       </p>
+                      <p className="occasion-product-price">
+                        ₹{Number(product.price).toLocaleString('en-IN')}
+                      </p>
                     </div>
                   </Link>
                 ))
               ) : (
-                <div className="no-products-message">
-                  No curations available for {activeOccasion} currently.
+                <div className="no-products-message" style={{ textAlign: 'center', gridColumn: '1 / -1', padding: '60px 0' }}>
+                  <h2>NO PIECES AVAILABLE</h2>
+                  <p>No products are currently available for this selection.</p>
                 </div>
               )}
             </div>
