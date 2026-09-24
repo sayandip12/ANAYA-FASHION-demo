@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { productService } from '../services/productService';
@@ -21,6 +21,11 @@ const Occasions = () => {
   const [activeOccasion, setActiveOccasion] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const queryParams = new URLSearchParams(location.search);
+  const urlOccasion = queryParams.get('occasion');
 
   useEffect(() => {
     loadProducts();
@@ -44,10 +49,21 @@ const Occasions = () => {
   );
 
   useEffect(() => {
-    if (!activeOccasion && availableOccasions.length > 0) {
+    if (urlOccasion && OCCASION_CATEGORIES.some(c => c.toLowerCase() === urlOccasion.toLowerCase())) {
+      const match = OCCASION_CATEGORIES.find(c => c.toLowerCase() === urlOccasion.toLowerCase());
+      if (activeOccasion !== match) {
+        setActiveOccasion(match);
+      }
+    } else if (!urlOccasion && !activeOccasion && availableOccasions.length > 0) {
       setActiveOccasion(availableOccasions[0]);
+      navigate(`/occasions?occasion=${encodeURIComponent(availableOccasions[0])}`, { replace: true });
     }
-  }, [availableOccasions, activeOccasion]);
+  }, [urlOccasion, availableOccasions, activeOccasion, navigate]);
+
+  const handleOccasionClick = (category) => {
+    setActiveOccasion(category);
+    navigate(`/occasions?occasion=${encodeURIComponent(category)}`);
+  };
 
   const filteredProducts = products.filter(product => {
     if (!activeOccasion || !product.occasions || !Array.isArray(product.occasions)) return false;
@@ -69,7 +85,7 @@ const Occasions = () => {
               <button
                 key={category}
                 className={`occasion-tab ${activeOccasion === category ? 'active' : ''}`}
-                onClick={() => setActiveOccasion(category)}
+                onClick={() => handleOccasionClick(category)}
               >
                 {category}
               </button>

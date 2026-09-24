@@ -15,23 +15,28 @@ const Collections = () => {
       try {
         const allProducts = await productService.getProducts();
         const targets = [
-          { match: p => p.category.toLowerCase().includes('saree') },
-          { match: p => p.category.toLowerCase().includes('lehenga') },
-          { match: p => p.category.toLowerCase().includes('blazer') || p.category.toLowerCase().includes('suit') },
-          { match: p => p.category.toLowerCase().includes('panjabi') || p.category.toLowerCase().includes('kurta') },
-          { match: p => p.category.toLowerCase().includes('ethnic wear') }
+          { match: p => p.category.toLowerCase().includes('saree'), name: 'Sarees', occasion: 'Wedding' },
+          { match: p => p.category.toLowerCase().includes('lehenga'), name: 'Lehengas', occasion: 'Bridal' },
+          { match: p => p.category.toLowerCase().includes('blazer') || p.category.toLowerCase().includes('suit'), name: 'Blazers & Suits', occasion: 'Formal' },
+          { match: p => p.category.toLowerCase().includes('panjabi') || p.category.toLowerCase().includes('kurta'), name: 'Panjabi & Kurta', occasion: 'Traditional' },
+          { match: p => p.category.toLowerCase().includes('ethnic wear'), name: 'Ethnic Wear', occasion: 'Festive' }
         ];
 
         const newCollectionData = [];
         
         targets.forEach(t => {
           const product = allProducts.find(t.match);
-          if (product && !newCollectionData.find(c => c.id === product.id)) {
+          if (product && !newCollectionData.find(c => c.title === t.name)) {
+            // Pick an occasion: prefer the mapped one if the product has it, else use the first one from product, else fallback
+            const actualOccasion = (product.occasions && product.occasions.includes(t.occasion)) 
+              ? t.occasion 
+              : (product.occasions && product.occasions.length > 0 ? product.occasions[0] : t.occasion);
+            
             newCollectionData.push({
               id: product.id,
-              title: product.name,
+              title: t.name,
               image: product.image,
-              link: `/product/${product.id}`
+              link: `/occasions?occasion=${encodeURIComponent(actualOccasion)}`
             });
           }
         });
@@ -41,11 +46,12 @@ const Collections = () => {
           const additional = allProducts.filter(p => !newCollectionData.find(c => c.id === p.id));
           for (const p of additional) {
             if (newCollectionData.length >= 5) break;
+            const fallbackOccasion = p.occasions && p.occasions.length > 0 ? p.occasions[0] : 'Party';
             newCollectionData.push({
               id: p.id,
-              title: p.name,
+              title: p.category,
               image: p.image,
-              link: `/product/${p.id}`
+              link: `/occasions?occasion=${encodeURIComponent(fallbackOccasion)}`
             });
           }
         }
