@@ -1,0 +1,177 @@
+.about-page {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+}
+
+.about-header {
+  padding: 160px 20px 80px;
+  text-align: center;
+  border-bottom: 1px solid rgba(241, 235, 221, 0.05);
+}
+
+.about-title {
+  font-family: var(--font-heading);
+  font-size: 42px;
+  margin-bottom: 16px;
+  letter-spacing: 0.02em;
+}
+
+.about-subtitle {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  color: var(--accent-color);
+  font-style: italic;
+}
+
+.about-story {
+  padding: 80px 20px;
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid rgba(241, 235, 221, 0.05);
+}
+
+.about-story-content {
+  max-width: 600px;
+  text-align: center;
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+
+.about-story-content p {
+  margin-bottom: 24px;
+}
+
+.section-heading {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  text-align: center;
+  margin-bottom: 60px;
+  letter-spacing: 0.05em;
+}
+
+.about-philosophy {
+  padding: 80px 20px;
+  background-color: var(--bg-dark-secondary);
+  border-bottom: 1px solid rgba(241, 235, 221, 0.05);
+}
+
+.philosophy-grid {
+  max-width: 900px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.philosophy-block {
+  text-align: center;
+}
+
+.philosophy-block h3 {
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+
+.philosophy-block p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.about-offerings {
+  padding: 80px 20px;
+  border-bottom: 1px solid rgba(241, 235, 221, 0.05);
+}
+
+.offerings-split {
+  max-width: 800px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+.offerings-col h3 {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  margin-bottom: 24px;
+  color: var(--accent-color);
+  border-bottom: 1px solid rgba(241, 235, 221, 0.1);
+  padding-bottom: 12px;
+}
+
+.offerings-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.offerings-col li {
+  font-size: 15px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+}
+
+.about-boutique {
+  padding: 80px 20px;
+  background-color: var(--bg-dark-secondary);
+  text-align: center;
+}
+
+.boutique-info {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.boutique-info h3 {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.boutique-info p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.boutique-cta {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 12px 30px;
+  border: 1px solid rgba(241, 235, 221, 0.3);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.boutique-cta:hover {
+  background-color: rgba(241, 235, 221, 0.05);
+  border-color: var(--text-light);
+}
+
+@media (max-width: 768px) {
+  .philosophy-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .offerings-split {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .about-title {
+    font-size: 32px;
+  }
+}

@@ -1,0 +1,151 @@
+.feature-section {
+  display: flex;
+  width: 100%;
+  background-color: var(--bg-dark);
+  border-bottom: 1px solid rgba(241, 235, 221, 0.05);
+}
+
+.feature-link-wrapper {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  min-height: 380px;
+  transition: opacity 0.3s ease;
+}
+
+.feature-reverse {
+  flex-direction: row-reverse;
+}
+
+.feature-content-half {
+  width: 70%;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  position: relative;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.feature-text-container {
+  width: 100%;
+  max-width: 520px;
+}
+
+.feature-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  text-transform: uppercase;
+}
+
+.label-line {
+  width: 30px;
+  height: 1px;
+  background-color: var(--text-muted);
+}
+
+.feature-title {
+  font-size: 46px;
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.feature-description {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 32px;
+}
+
+.feature-button {
+  font-family: var(--font-body);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(241, 235, 221, 0.3);
+  padding: 10px 24px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.feature-link-wrapper:hover .feature-button {
+  border-color: var(--text-light);
+  background-color: rgba(241, 235, 221, 0.05);
+}
+
+.feature-image-half {
+  width: 30%;
+  flex: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.feature-image-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.feature-image {
+  width: 100%;
+  height: 105%;
+  object-fit: cover;
+  object-position: center 20%;
+  will-change: transform;
+}
+
+.feature-link-wrapper:hover .feature-image {
+  transform: scale(1.02);
+}
+
+.feature-side-caption {
+  display: none; /* Removing side captions as 30% is too small for them */
+}
+
+@media (max-width: 1024px) {
+  .feature-title {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 768px) {
+  .feature-link-wrapper {
+    flex-direction: column-reverse;
+    height: auto;
+    min-height: auto;
+  }
+  
+  .feature-reverse {
+    flex-direction: column-reverse;
+  }
+  
+  .feature-content-half,
+  .feature-image-half {
+    width: 100%;
+  }
+  
+  .feature-image-half {
+    height: 320px;
+    min-height: 320px;
+  }
+  
+  .feature-image {
+    height: 100%;
+  }
+  
+  .feature-content-half {
+    padding: 50px 20px;
+  }
+}
