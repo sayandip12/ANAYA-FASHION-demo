@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { generateWhatsAppLink } from '../utils/whatsapp';
 import { IMAGES } from '../config/imageConfig';
 import SearchOverlay from './SearchOverlay';
+import { useStoreConfig } from '../hooks/useStoreConfig';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -10,6 +11,7 @@ const Navbar = () => {
   const [lastClickTime, setLastClickTime] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const navigate = useNavigate();
+  const { config } = useStoreConfig();
 
   const handleLogoClick = (e) => {
     const now = Date.now();
@@ -35,8 +37,8 @@ const Navbar = () => {
         <Link to="/" className="navbar-brand-link" onClick={handleLogoClick}>
           <img src={IMAGES.logo} alt="ANAYA Logo" className="navbar-logo-img" />
           <div className="navbar-brand-text">
-            <div className="logo-title">ANAYA</div>
-            <div className="logo-subtitle">WEAR THE MOMENT</div>
+            <div className="logo-title">{config?.name || 'ANAYA'}</div>
+            <div className="logo-subtitle">{config?.tagline || 'WEAR THE MOMENT'}</div>
           </div>
         </Link>
       </div>
@@ -57,7 +59,7 @@ const Navbar = () => {
           </svg>
           <span>Search</span>
         </button>
-        <a href={generateWhatsAppLink()} target="_blank" rel="noopener noreferrer" className="icon-button">
+        <a href={generateWhatsAppLink(null, config)} target="_blank" rel="noopener noreferrer" className="icon-button">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
           </svg>

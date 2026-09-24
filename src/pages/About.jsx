@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { BUSINESS_CONFIG } from '../config/businessConfig';
+import { useStoreConfig } from '../hooks/useStoreConfig';
 import { Link } from 'react-router-dom';
 import './About.css';
 
 const About = () => {
+  const { config } = useStoreConfig();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -85,9 +87,9 @@ const About = () => {
       <section className="about-boutique">
         <h2 className="section-heading">THE BOUTIQUE</h2>
         <div className="boutique-info">
-          <h3>ANAYA BOUTIQUE</h3>
-          <p>Narkeltala More, near ULUBERIA COLLEGE, Sizberia, Kalibari, Uluberia, Sijberia, Howrah, West Bengal 711315</p>
-          <p>Phone: 08240718208</p>
+          <h3>{config?.name || 'ANAYA'} BOUTIQUE</h3>
+          <p>{config?.address || ''}</p>
+          <p>Phone: {config?.phone || ''}</p>
           <Link to="/contact" className="boutique-cta">VISIT OUR STORE →</Link>
         </div>
       </section>

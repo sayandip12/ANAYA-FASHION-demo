@@ -1,26 +1,68 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
-import { IMAGES } from '../config/imageConfig';
+import { productService } from '../services/productService';
 import './Collections.css';
-
-const collectionData = [
-  { id: 1, title: 'Sarees', image: IMAGES.collectionSaree, link: '/women' },
-  { id: 2, title: 'Lehengas', image: IMAGES.collectionLehenga, link: '/women' },
-  { id: 3, title: 'Blazers & Suits', image: IMAGES.collectionBlazer, link: '/men' },
-  { id: 4, title: 'Panjabi & Kurta', image: IMAGES.collectionPanjabi, link: '/men' },
-  { id: 5, title: 'Ethnic Wear', image: IMAGES.collectionEthnic, link: '/women' },
-];
 
 const Collections = () => {
   const containerRef = useRef(null);
   const trackRef = useRef(null);
-  
-  // Triplicate the cards to make it loop seamlessly (enough to cover wide screens)
-  const cards = [...collectionData, ...collectionData, ...collectionData, ...collectionData];
+  const wasDraggedRef = useRef(false);
+  const [collectionData, setCollectionData] = useState([]);
   
   useEffect(() => {
-    if (!trackRef.current) return;
+    const loadData = async () => {
+      try {
+        const allProducts = await productService.getProducts();
+        const targets = [
+          { match: p => p.category.toLowerCase().includes('saree') },
+          { match: p => p.category.toLowerCase().includes('lehenga') },
+          { match: p => p.category.toLowerCase().includes('blazer') || p.category.toLowerCase().includes('suit') },
+          { match: p => p.category.toLowerCase().includes('panjabi') || p.category.toLowerCase().includes('kurta') },
+          { match: p => p.category.toLowerCase().includes('ethnic wear') }
+        ];
+
+        const newCollectionData = [];
+        
+        targets.forEach(t => {
+          const product = allProducts.find(t.match);
+          if (product && !newCollectionData.find(c => c.id === product.id)) {
+            newCollectionData.push({
+              id: product.id,
+              title: product.name,
+              image: product.image,
+              link: `/product/${product.id}`
+            });
+          }
+        });
+
+        // If we don't have enough, fill with featured or other products
+        if (newCollectionData.length < 5) {
+          const additional = allProducts.filter(p => !newCollectionData.find(c => c.id === p.id));
+          for (const p of additional) {
+            if (newCollectionData.length >= 5) break;
+            newCollectionData.push({
+              id: p.id,
+              title: p.name,
+              image: p.image,
+              link: `/product/${p.id}`
+            });
+          }
+        }
+        
+        setCollectionData(newCollectionData);
+      } catch (error) {
+        console.error("Failed to load collections", error);
+      }
+    };
+    loadData();
+  }, []);
+  
+  // Triplicate the cards to make it loop seamlessly (enough to cover wide screens)
+  const cards = collectionData.length > 0 ? [...collectionData, ...collectionData, ...collectionData, ...collectionData] : [];
+  
+  useEffect(() => {
+    if (cards.length === 0 || !trackRef.current) return;
     
     const track = trackRef.current;
     const items = track.children;
@@ -33,6 +75,7 @@ const Collections = () => {
     let speed = 0.8; // Slow, premium speed
     let isHovered = false;
     let dragStartX = 0;
+    let initialClientX = 0;
     let isDragging = false;
     
     // Track width for infinite looping
@@ -45,6 +88,7 @@ const Collections = () => {
       
       for (let i = 0; i < numItems; i++) {
         const item = items[i];
+        if (!item) continue;
         const rect = item.getBoundingClientRect();
         const itemCenterX = rect.left + rect.width / 2;
         
@@ -95,13 +139,18 @@ const Collections = () => {
     
     const onDragStart = (e) => {
       isDragging = true;
+      wasDraggedRef.current = false;
       const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      initialClientX = clientX;
       dragStartX = clientX - xPos;
     };
     
     const onDragMove = (e) => {
       if (!isDragging) return;
       const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+      if (Math.abs(clientX - initialClientX) > 5) {
+        wasDraggedRef.current = true;
+      }
       xPos = clientX - dragStartX;
     };
     
@@ -134,7 +183,11 @@ const Collections = () => {
       window.removeEventListener('touchmove', onDragMove);
       window.removeEventListener('touchend', onDragEnd);
     };
-  }, []);
+  }, [cards.length, collectionData.length]);
+
+  if (collectionData.length === 0) {
+    return <section className="collections section" style={{ minHeight: '300px' }}></section>;
+  }
 
   return (
     <section className="collections section" ref={containerRef}>
@@ -149,7 +202,18 @@ const Collections = () => {
         <div className="collections-carousel-container" style={{ overflow: 'hidden', padding: '20px 0' }}>
           <div className="collections-track" ref={trackRef}>
             {cards.map((item, index) => (
-              <Link to={item.link} key={`${item.id}-${index}`} className="collection-card" draggable="false">
+              <Link 
+                to={item.link} 
+                key={`${item.id}-${index}`} 
+                className="collection-card" 
+                draggable="false"
+                onClick={(e) => {
+                  if (wasDraggedRef.current) {
+                    e.preventDefault();
+                  }
+                }}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
                 <div className="collection-image-wrapper">
                   <img src={item.image} alt={item.title} className="collection-image" draggable="false" />
                   <div className="collection-overlay"></div>

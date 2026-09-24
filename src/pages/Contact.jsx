@@ -2,10 +2,12 @@ import React, { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { generateWhatsAppLink } from '../utils/whatsapp';
-import { BUSINESS_CONFIG } from '../config/businessConfig';
+import { useStoreConfig } from '../hooks/useStoreConfig';
 import './Contact.css';
 
 const Contact = () => {
+  const { config } = useStoreConfig();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -25,17 +27,17 @@ const Contact = () => {
             
             <div className="contact-details-box">
               <h3>VISIT OUR STORE</h3>
-              <p className="contact-text">{BUSINESS_CONFIG.address}</p>
+              <p className="contact-text">{config?.address || ''}</p>
             </div>
 
             <div className="contact-details-box">
               <h3>STORE HOURS</h3>
-              <p className="contact-text">{BUSINESS_CONFIG.storeHours}</p>
+              <p className="contact-text">{config?.storeHours || ''}</p>
             </div>
 
             <div className="contact-details-box">
               <h3>CALL US</h3>
-              <p className="contact-text">{BUSINESS_CONFIG.phone}</p>
+              <p className="contact-text">{config?.phone || ''}</p>
             </div>
             
             <div className="contact-services">
@@ -45,20 +47,20 @@ const Contact = () => {
             </div>
 
             <div className="contact-actions">
-              <a href={`tel:${BUSINESS_CONFIG.phone}`} className="contact-btn">
+              <a href={`tel:${config?.phone || ''}`} className="contact-btn">
                 CALL NOW
               </a>
-              <a href={generateWhatsAppLink()} target="_blank" rel="noopener noreferrer" className="contact-btn contact-btn-solid">
+              <a href={generateWhatsAppLink(null, config)} target="_blank" rel="noopener noreferrer" className="contact-btn contact-btn-solid">
                 WHATSAPP
               </a>
             </div>
           </div>
           
           <div className="contact-map-half">
-            {BUSINESS_CONFIG.mapEmbedUrl && (
+            {config?.address ? (
               <div className="contact-map-container">
                 <iframe 
-                  src={BUSINESS_CONFIG.mapEmbedUrl} 
+                  src={`https://maps.google.com/maps?q=ANAYA Fashion, ${encodeURIComponent(config.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                   width="100%" 
                   height="100%" 
                   style={{ border: 0 }} 
@@ -68,10 +70,21 @@ const Contact = () => {
                   title="ANAYA Store Location"
                 ></iframe>
               </div>
+            ) : (
+              <div className="contact-map-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f9f9f9', height: '100%' }}>
+                <h3>ANAYA</h3>
+                {config?.mapEmbedUrl && (
+                  <a href={config.mapEmbedUrl} target="_blank" rel="noopener noreferrer" style={{ marginTop: '1rem', textDecoration: 'none', color: 'var(--color-primary)' }}>
+                    View location on Google Maps →
+                  </a>
+                )}
+              </div>
             )}
-            <a href={BUSINESS_CONFIG.mapLink} target="_blank" rel="noopener noreferrer" className="contact-btn" style={{ width: '100%', justifyContent: 'center' }}>
-              GET DIRECTIONS
-            </a>
+            {config?.mapEmbedUrl && (
+              <a href={config.mapEmbedUrl} target="_blank" rel="noopener noreferrer" className="contact-btn" style={{ width: '100%', justifyContent: 'center' }}>
+                GET DIRECTIONS
+              </a>
+            )}
           </div>
         </div>
       </div>

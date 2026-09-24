@@ -98,7 +98,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                   <div className="search-result-info">
                     <h4 className="search-result-name">{product.name}</h4>
                     <p className="search-result-meta">{product.category}</p>
-                    <p className="search-result-price">₹{product.price.toLocaleString('en-IN')}</p>
+                    <p className="search-result-price">₹{Number(product.price).toLocaleString('en-IN')}</p>
                   </div>
                 </div>
               ))}

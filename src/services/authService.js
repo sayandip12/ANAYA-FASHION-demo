@@ -1,30 +1,30 @@
-// Mock Auth Service for prototype
-// Replace this with Supabase Auth later
-
-let isAuthenticated = false;
+import { supabase } from '../config/supabaseClient';
 
 export const authService = {
-  login: async (username, password) => {
-    // Isolated temporary credential check
-    // In production, this would call supabase.auth.signInWithPassword
-    await new Promise(resolve => setTimeout(resolve, 500));
+  login: async (email, password) => {
+    if (!supabase) return { user: null, error: new Error('Supabase client not initialized') };
     
-    if (username === 'admin' && password === 'anaya2026') {
-      isAuthenticated = true;
-      return { user: { username: 'admin' }, error: null };
-    }
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
     
-    return { user: null, error: new Error('Invalid credentials') };
+    return { user: data?.user, error };
   },
   
   logout: async () => {
-    // In production: await supabase.auth.signOut()
-    await new Promise(resolve => setTimeout(resolve, 200));
-    isAuthenticated = false;
+    if (!supabase) return;
+    await supabase.auth.signOut();
   },
   
-  checkAuth: () => {
-    // In production: return await supabase.auth.getSession()
-    return isAuthenticated;
+  checkAuth: async () => {
+    if (!supabase) return false;
+    const { data: { session } } = await supabase.auth.getSession();
+    return !!session;
+  },
+
+  onAuthStateChange: (callback) => {
+    if (!supabase) return { data: { subscription: { unsubscribe: () => {} } } };
+    return supabase.auth.onAuthStateChange(callback);
   }
 };

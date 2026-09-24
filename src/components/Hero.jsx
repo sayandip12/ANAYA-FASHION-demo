@@ -23,9 +23,9 @@ const Hero = () => {
           </h1>
           <p className="hero-subtitle">Tradition. Style. You.</p>
           
-          <Link to="/collections">
+          <Link to="/occasions">
             <button className="hero-cta">
-              EXPLORE COLLECTION
+              EXPLORE OCCASIONS
               <span className="button-arrow">→</span>
             </button>
           </Link>

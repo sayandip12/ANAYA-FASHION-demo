@@ -26,11 +26,27 @@ const AdminDashboard = () => {
   });
 
   useEffect(() => {
-    if (!authService.checkAuth()) {
-      navigate('/admin/login');
-      return;
-    }
-    loadData();
+    const init = async () => {
+      const isAuth = await authService.checkAuth();
+      if (!isAuth) {
+        navigate('/admin/login');
+        return;
+      }
+      
+      // Subscribe to auth changes
+      const { data: { subscription } } = authService.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_OUT' || !session) {
+          navigate('/admin/login');
+        }
+      });
+
+      loadData();
+      
+      return () => {
+        subscription.unsubscribe();
+      };
+    };
+    init();
   }, [navigate]);
 
   const loadData = async () => {
@@ -52,7 +68,7 @@ const AdminDashboard = () => {
 
   const handleLogout = async () => {
     await authService.logout();
-    navigate('/');
+    navigate('/admin');
   };
 
   const handleProductDelete = async (id) => {
@@ -86,7 +102,8 @@ const AdminDashboard = () => {
       setShowProductForm(false);
       setEditingProduct(null);
     } catch (err) {
-      alert('Failed to save product');
+      console.error(err);
+      alert(`Failed to save product: ${err.message || 'Database error'}`);
     }
   };
 
@@ -115,11 +132,13 @@ const AdminDashboard = () => {
   const handleStoreConfigSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updated = await storeService.updateStoreConfig(storeFormData);
+      // Assuming store ID is '00000000-0000-0000-0000-000000000000' from seed
+      const updated = await storeService.updateStoreConfig('00000000-0000-0000-0000-000000000000', storeFormData);
       setStoreConfig(updated);
       alert('Store settings saved successfully');
     } catch (err) {
-      alert('Failed to save store settings');
+      console.error(err);
+      alert(`Failed to save store settings: ${err.message || 'Database error'}`);
     }
   };
 
@@ -175,7 +194,31 @@ const AdminDashboard = () => {
                     </div>
                     <div className="form-group">
                       <label>Category</label>
-                      <input type="text" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required className="admin-input" />
+                      <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required className="admin-input">
+                        <option value="">Select Category</option>
+                        <optgroup label="Women">
+                          <option value="Saree">Saree</option>
+                          <option value="Designer Saree">Designer Saree</option>
+                          <option value="Bridal Saree">Bridal Saree</option>
+                          <option value="Lehenga">Lehenga</option>
+                          <option value="Bridal Lehenga">Bridal Lehenga</option>
+                          <option value="Kurti">Kurti</option>
+                          <option value="Kurti Set">Kurti Set</option>
+                          <option value="Party Dress">Party Dress</option>
+                          <option value="Anarkali">Anarkali</option>
+                          <option value="Ethnic Wear">Ethnic Wear</option>
+                        </optgroup>
+                        <optgroup label="Men">
+                          <option value="Blazer">Blazer</option>
+                          <option value="Suit">Suit</option>
+                          <option value="Panjabi">Panjabi</option>
+                          <option value="Kurta">Kurta</option>
+                          <option value="Sherwani">Sherwani</option>
+                          <option value="Wedding Wear">Wedding Wear</option>
+                          <option value="Party Wear">Party Wear</option>
+                          <option value="Formal Wear">Formal Wear</option>
+                        </optgroup>
+                      </select>
                     </div>
                   </div>
 
@@ -282,7 +325,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="form-group">
                     <label>Store Hours</label>
-                    <input type="text" value={storeFormData.storeHours || ''} onChange={e => setStoreFormData({...storeFormData, storeHours: e.target.value})} required className="admin-input" />
+                    <input type="text" value={storeFormData.storeHours || ''} onChange={e => setStoreFormData({...storeFormData, storeHours: e.target.value})} className="admin-input" />
                   </div>
                 </div>
 

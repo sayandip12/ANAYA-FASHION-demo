@@ -43,7 +43,7 @@ const ProductDetail = () => {
         <Navbar />
         <div style={{ padding: '200px 0', textAlign: 'center' }}>
           <h2>Piece Not Found</h2>
-          <Link to="/collections" style={{ color: 'var(--accent-color)' }}>Return to Collections</Link>
+          <Link to="/" style={{ color: 'var(--accent-color)' }}>Return to Catalogue</Link>
         </div>
         <Footer />
       </div>
@@ -62,11 +62,11 @@ const ProductDetail = () => {
         
         <div className="product-detail-info-side">
           <div className="product-detail-breadcrumbs">
-            <Link to="/collections">COLLECTIONS</Link> / <Link to={`/${product.gender.toLowerCase()}`}>{product.gender.toUpperCase()}</Link> / <span>{product.category.toUpperCase()}</span>
+            <Link to="/">HOME</Link> / <Link to={`/${product.gender.toLowerCase()}`}>{product.gender.toUpperCase()}</Link> / <span>{product.category.toUpperCase()}</span>
           </div>
           
           <h1 className="product-detail-title">{product.name}</h1>
-          <div className="product-detail-price">₹{product.price.toLocaleString('en-IN')}</div>
+          <div className="product-detail-price">₹{Number(product.price).toLocaleString('en-IN')}</div>
           
           <p className="product-detail-description">{product.description}</p>
           

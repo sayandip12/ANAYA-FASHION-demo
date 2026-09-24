@@ -18,7 +18,7 @@ const OCCASION_CATEGORIES = [
 
 const Occasions = () => {
   const [products, setProducts] = useState([]);
-  const [activeOccasion, setActiveOccasion] = useState('Wedding');
+  const [activeOccasion, setActiveOccasion] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -37,9 +37,19 @@ const Occasions = () => {
     }
   };
 
+  const availableOccasions = OCCASION_CATEGORIES.filter(category => 
+    products.some(product => Array.isArray(product.occasions) && product.occasions.some(occ => occ.toLowerCase() === category.toLowerCase()))
+  );
+
+  useEffect(() => {
+    if (!activeOccasion && availableOccasions.length > 0) {
+      setActiveOccasion(availableOccasions[0]);
+    }
+  }, [availableOccasions, activeOccasion]);
+
   const filteredProducts = products.filter(product => {
     if (!product.occasions || !Array.isArray(product.occasions)) return false;
-    return product.occasions.includes(activeOccasion);
+    return product.occasions.some(occ => occ.toLowerCase() === activeOccasion.toLowerCase());
   });
 
   return (
@@ -53,7 +63,7 @@ const Occasions = () => {
 
         <section className="occasions-navigation-section">
           <div className="occasions-tabs">
-            {OCCASION_CATEGORIES.map(category => (
+            {availableOccasions.map(category => (
               <button
                 key={category}
                 className={`occasion-tab ${activeOccasion === category ? 'active' : ''}`}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { productService } from '../services/productService';
@@ -25,11 +25,27 @@ const CollectionsPage = ({ genderFilter }) => {
     loadProducts();
   }, [genderFilter]);
 
-  const displayProducts = genderFilter 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const categoryFilter = searchParams.get('category');
+
+  let displayProducts = genderFilter 
     ? products.filter(p => p.gender.toLowerCase() === genderFilter.toLowerCase())
     : products;
 
-  const pageTitle = genderFilter ? `${genderFilter.toUpperCase()} COLLECTION` : 'ALL COLLECTIONS';
+  if (categoryFilter) {
+    const categories = categoryFilter.toLowerCase().split(',');
+    displayProducts = displayProducts.filter(p => 
+      categories.some(cat => p.category.toLowerCase().includes(cat.trim()))
+    );
+  }
+
+  let pageTitle = genderFilter ? `${genderFilter.toUpperCase()} COLLECTION` : 'ALL COLLECTIONS';
+  if (categoryFilter && !categoryFilter.includes(',')) {
+    pageTitle = `${categoryFilter.toUpperCase()}`;
+  } else if (categoryFilter) {
+    pageTitle = `${genderFilter ? genderFilter.toUpperCase() + ' ' : ''}COLLECTION`;
+  }
 
   return (
     <div className="page-wrapper">
@@ -54,7 +70,7 @@ const CollectionsPage = ({ genderFilter }) => {
                 <div className="product-info">
                   <h3 className="product-name">{product.name}</h3>
                   <span className="product-category">{product.category}</span>
-                  <span className="product-price">₹{product.price.toLocaleString('en-IN')}</span>
+                  <span className="product-price">₹{Number(product.price).toLocaleString('en-IN')}</span>
                   <div className="product-view-link">VIEW PIECE →</div>
                 </div>
               </Link>

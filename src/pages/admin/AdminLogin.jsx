@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
 import { IMAGES } from '../../config/imageConfig';
 import './Admin.css';
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,15 +17,15 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      const { user, error: loginError } = await authService.login(username, password);
+      const { user, error: loginError } = await authService.login(email, password);
       
       if (loginError) {
-        setError(loginError.message);
+        setError(loginError.message || 'Invalid email or password.');
       } else if (user) {
         navigate('/admin/dashboard');
       }
     } catch (err) {
-      setError('An error occurred during login');
+      setError('An error occurred during login. Please check your connection.');
     } finally {
       setLoading(false);
     }
@@ -43,11 +43,11 @@ const AdminLogin = () => {
         
         <form onSubmit={handleLogin} className="admin-login-form">
           <div className="form-group">
-            <label>Username</label>
+            <label>Email</label>
             <input 
-              type="text" 
-              value={username} 
-              onChange={(e) => setUsername(e.target.value)} 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
               required 
               className="admin-input"
             />
@@ -65,7 +65,7 @@ const AdminLogin = () => {
           </div>
           
           <button type="submit" disabled={loading} className="admin-submit-btn">
-            {loading ? 'AUTHENTICATING...' : 'LOGIN'}
+            {loading ? 'AUTHENTICATING...' : 'SIGN IN'}
           </button>
         </form>
       </div>

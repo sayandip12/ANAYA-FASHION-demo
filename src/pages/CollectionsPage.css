@@ -26,7 +26,7 @@
 .product-card {
   display: flex;
   flex-direction: column;
-  group: hover;
+  text-decoration: none;
 }
 
 .product-image-wrapper {

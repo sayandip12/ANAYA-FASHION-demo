@@ -146,6 +146,10 @@
     margin-top: 60px;
   }
   
+  .contact-map-container {
+    height: 260px;
+  }
+  
   .contact-title {
     font-size: 40px;
   }

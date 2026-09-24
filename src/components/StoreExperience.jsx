@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { IMAGES } from '../config/imageConfig';
-import { BUSINESS_CONFIG } from '../config/businessConfig';
+import { useStoreConfig } from '../hooks/useStoreConfig';
 import './StoreExperience.css';
 
 const StoreExperience = () => {
+  const { config } = useStoreConfig();
+
   return (
     <section className="store-section" id="store-section">
       <div className="store-image-half">
@@ -20,12 +22,12 @@ const StoreExperience = () => {
           
           <h2 className="store-title">
             Experience<br />
-            ANAYA
+            {config?.name || 'ANAYA'}
           </h2>
           
           <div className="store-address-box">
-            <p className="store-address-text">{BUSINESS_CONFIG.address}</p>
-            <p className="store-phone-text">Call: {BUSINESS_CONFIG.phone}</p>
+            <p className="store-address-text">{config?.address || ''}</p>
+            <p className="store-phone-text">Call: {config?.phone || ''}</p>
           </div>
           
           <div className="store-services">
@@ -34,25 +36,10 @@ const StoreExperience = () => {
             <div className="store-service-item">WEDDING CONSULTATION</div>
           </div>
           
-          <Link to="/contact" className="store-button" style={{ marginBottom: '24px', display: 'inline-flex' }}>
+          <Link to="/contact" className="store-button">
             VISIT OUR STORE
             <span className="button-arrow">→</span>
           </Link>
-
-          {BUSINESS_CONFIG.mapEmbedUrl && (
-            <div className="store-map-container">
-              <iframe 
-                src={BUSINESS_CONFIG.mapEmbedUrl} 
-                width="100%" 
-                height="120" 
-                style={{ border: 0, borderRadius: '4px' }} 
-                allowFullScreen="" 
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-                title="ANAYA Store Location"
-              ></iframe>
-            </div>
-          )}
         </div>
       </div>
     </section>
